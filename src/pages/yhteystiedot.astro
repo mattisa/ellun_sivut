@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+---
+<Base title="Yhteystiedot" description="Ota yhteyttä sopraano Eilamaria Leskiseen: konserttiyhteistyö, esiintymiset ja levytilaukset.">
+  <div class="wrap section two">
+    <div>
+      <p class="eyebrow">Yhteystiedot</p>
+      <h1>Ota yhteyttä</h1>
+      <p>Konserttiyhteistyö, esiintymiset ja levytilaukset.</p>
+      <p><strong>Puhelin</strong><br /><a href={`tel:${site.phone.replace(/\s/g, '')}`}>{site.phone}</a></p>
+      <p><strong>Sähköposti</strong><br /><a href={`mailto:${site.email}`}>{site.email}</a></p>
+      <p class="social"><a href={site.youtubeChannel} rel="noopener" target="_blank">YouTube</a><a href={site.facebook} rel="noopener" target="_blank">Facebook</a></p>
+    </div>
+    <form id="contact" novalidate>
+      <label>Nimi <input name="name" required maxlength="100" autocomplete="name" /></label>
+      <label>Sähköposti <input name="email" type="email" required maxlength="200" autocomplete="email" /></label>
+      <label>Viesti <textarea name="message" required maxlength="4000"></textarea></label>
+      <label class="hp" aria-hidden="true">Älä täytä <input name="website" tabindex="-1" autocomplete="off" /></label>
+      <button class="btn" type="submit">Lähetä</button>
+      <p class="form-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</Base>
+<script>
+  const form = document.getElementById('contact') as HTMLFormElement;
+  const status = form.querySelector('.form-status') as HTMLElement;
+  const btn = form.querySelector('button') as HTMLButtonElement;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) { status.className = 'form-status err'; status.textContent = 'Täytä kaikki kentät oikein.'; form.reportValidity(); return; }
+    btn.disabled = true; status.className = 'form-status'; status.textContent = 'Lähetetään…';
+    try {
+      const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.fromEntries(new FormData(form))) });
+      if (!res.ok) throw new Error(String(res.status));
+      form.reset(); status.className = 'form-status ok'; status.textContent = 'Viestisi on lähetetty! Kiitos yhteydenotostasi!';
+    } catch {
+      status.className = 'form-status err'; status.textContent = 'Lähetys epäonnistui. Kokeile uudelleen tai lähetä sähköpostia suoraan.';
+    } finally { btn.disabled = false; }
+  });
+</script>

@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import reviews from '../data/reviews.json';
+---
+<Base title="Arvosteluja" description="Lehtiarvosteluja Eilamaria Leskisen konserteista, oopperoista, operetteista ja levytyksistä.">
+  <div class="narrow section">
+    <p class="eyebrow">Arvosteluja</p>
+    <h1>Mitä lehdet sanovat</h1>
+    <div style="margin-top:2.5rem">
+      {reviews.map((r) => (
+        <figure class="review" style="margin-inline:0">
+          <div class="ctx">{r.context}</div>
+          <blockquote>”{r.quote}”</blockquote>
+          <figcaption><cite>{r.source}</cite></figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</Base>

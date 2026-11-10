@@ -1,0 +1,62 @@
+---
+import '@fontsource-variable/cormorant-garamond';
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+import { site } from '../data/site';
+interface Props { title?: string; description?: string; jsonLd?: object[]; }
+const { title, description = site.description, jsonLd = [] } = Astro.props;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name}, sopraano`;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const canonical = new URL(path, site.url).href;
+const person = {
+  '@context': 'https://schema.org', '@type': 'Person', name: site.name, jobTitle: 'Sopraano',
+  url: site.url, email: site.email, telephone: site.phone, sameAs: [site.youtubeChannel, site.facebook],
+  homeLocation: { '@type': 'Place', name: 'Pieksämäki' },
+};
+---
+<!doctype html>
+<html lang="fi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#14131a" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fi_FI" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={`${site.url}/og.jpg`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="application/ld+json" set:html={JSON.stringify([person, ...jsonLd])} />
+  </head>
+  <body>
+    <a class="skip" href="#main">Siirry sisältöön</a>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="/">Eilamaria Leskinen</a>
+        <nav aria-label="Päävalikko">
+          <ul>
+            {site.nav.map((n) => (
+              <li><a href={n.href} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div class="wrap">
+        <span>© {new Date().getFullYear()} {site.name}</span>
+        <span class="social">
+          <a href={site.youtubeChannel} rel="noopener" target="_blank">YouTube</a>
+          <a href={site.facebook} rel="noopener" target="_blank">Facebook</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

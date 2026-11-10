@@ -1,0 +1,18 @@
+---
+import { fmt, type Concert } from '../data/concerts';
+interface Props { items: Concert[]; }
+const { items } = Astro.props;
+---
+<div>
+  {items.map((c) => (
+    <article class="concert">
+      <div class="date"><time datetime={c.date}>{fmt(c.date)}</time>{c.time && <div class="meta" style="font-family:var(--sans);font-size:.9rem;color:var(--muted)">klo {c.time}</div>}</div>
+      <div>
+        <h3>{c.title}</h3>
+        <div class="meta">{c.venue}, {c.city}</div>
+        {c.description && <p>{c.description}</p>}
+        {c.link && <p><a href={c.link} rel="noopener" target="_blank">Lisätietoja ja liput</a></p>}
+      </div>
+    </article>
+  ))}
+</div>

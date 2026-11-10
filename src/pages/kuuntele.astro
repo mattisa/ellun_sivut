@@ -1,0 +1,45 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import YouTube from '../components/YouTube.astro';
+import back from '../assets/photos/pohjan-neiti-takakansi.jpg';
+import albums from '../data/albums.json';
+import singles from '../data/singles.json';
+import { site } from '../data/site';
+---
+<Base title="Kuuntele" description="Kuuntele Eilamaria Leskista YouTubessa ja Spotifyssa. Levyt: Pohjan neiti, Sano se sävelin, Karl Collan lauluja, Leino ja Sarkia.">
+  <div class="wrap section">
+    <p class="eyebrow">Kuuntele</p>
+    <h1>Videot ja levyt</h1>
+    <div class="grid" style="margin-block:2rem">
+      {site.youtubeVideos.map((id, i) => <YouTube id={id} title={`Eilamaria Leskinen, video ${i + 1}`} />)}
+    </div>
+    <div class="btn-row">
+      <a class="btn" href={site.youtubeChannel} rel="noopener" target="_blank">Kaikki videot YouTubessa</a>
+      <a class="btn" href={site.spotifyAlbum} rel="noopener" target="_blank">Karl Collan lauluja Spotifyssa</a>
+    </div>
+  </div>
+
+  <section class="section band"><div class="wrap">
+    <h2>Levyt</h2>
+    <div class="grid">
+      {albums.map((a) => (
+        <div class="card">
+          <h3>{a.title}</h3>
+          <div class="meta">{a.year}</div>
+          {a.note && <p>{a.note}</p>}
+          {a.order === 'store'
+            ? <p>Tilaa <a href={site.store} rel="noopener" target="_blank">verkkokaupasta</a> tai Fuga Musiikista.</p>
+            : <p>Tilaus suoraan sähköpostilla: <a href={`mailto:${site.email}`}>{site.email}</a></p>}
+          {a.spotify && <p><a href={site.spotifyAlbum} rel="noopener" target="_blank">Kuuntele Spotifyssa</a></p>}
+        </div>
+      ))}
+    </div>
+    <h3 style="margin-top:2.5rem">Singlet</h3>
+    <p>{singles.map((s) => `${s.title} (${s.year})`).join(' · ')}</p>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <Image class="cover" src={back} alt="Pohjan neiti -levyn takakansi ja kappalelista" widths={[600, 1000, 1400]} sizes="(min-width: 70rem) 68rem, 100vw" />
+  </div></section>
+</Base>

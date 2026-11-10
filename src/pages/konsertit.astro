@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import ConcertList from '../components/ConcertList.astro';
+import { upcoming, past } from '../data/concerts';
+import { site } from '../data/site';
+const events = upcoming.map((c) => ({
+  '@context': 'https://schema.org', '@type': 'MusicEvent', name: c.title, startDate: c.time ? `${c.date}T${c.time}:00` : c.date,
+  location: { '@type': 'Place', name: c.venue, address: { '@type': 'PostalAddress', addressLocality: c.city, addressCountry: 'FI' } },
+  performer: { '@type': 'Person', name: site.name }, ...(c.link ? { url: c.link } : {}),
+}));
+---
+<Base title="Konsertit" description="Eilamaria Leskisen tulevat konsertit ja esiintymiset." jsonLd={events}>
+  <div class="wrap section">
+    <p class="eyebrow">Konsertit</p>
+    <h1>Tulevat esiintymiset</h1>
+    {upcoming.length > 0
+      ? <ConcertList items={upcoming} />
+      : <p>Tulevia konsertteja ei ole vielä julkaistu. Seuraa <a href={site.facebook} rel="noopener" target="_blank">Facebook-sivua</a> tai <a href="/yhteystiedot">ota yhteyttä</a> esiintymisasioissa.</p>}
+    {past.length > 0 && (<><h2 style="margin-top:3rem">Menneet</h2><ConcertList items={past} /></>)}
+  </div>
+</Base>

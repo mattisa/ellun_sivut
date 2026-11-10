@@ -1,0 +1,60 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import hero from '../assets/photos/hero.jpg';
+import cover from '../assets/photos/pohjan-neiti-kansi.jpg';
+import { site } from '../data/site';
+import { upcoming, fmt } from '../data/concerts';
+const next = upcoming.slice(0, 3);
+---
+<Base>
+  <section class="hero">
+    <Image src={hero} alt="Sopraano Eilamaria Leskinen" widths={[800, 1280, 1920, 2400]} sizes="100vw" loading="eager" fetchpriority="high" />
+    <div class="hero-text"><div class="wrap"><div class="inner">
+      <h1>Eilamaria<br />Leskinen</h1>
+      <p>{site.tagline}</p>
+      <div class="btn-row"><a class="btn" href="/kuuntele">Kuuntele</a><a class="btn" href="/yhteystiedot">Ota yhteyttä</a></div>
+    </div></div></div>
+  </section>
+
+  <section class="section">
+    <div class="wrap two">
+      <div>
+        <p class="eyebrow">Sopraano · Pieksämäki</p>
+        <h2>Ooppera, operetti ja konsertit</h2>
+        <p>Pieksämäkeläinen freelancelaulaja, ilmaisuvoimainen sopraano. Laajaan ohjelmistoon kuuluu ooppera-, operetti-, musikaali- ja kirkkomusiikkia sekä klassista ja kevyempää laulumusiikkia. Konsertteja on ollut ympäri Suomea sekä Virossa, Unkarissa, Espanjassa ja Ruotsissa.</p>
+        <div class="btn-row"><a class="btn" href="/cv">Lue lisää</a><a class="btn" href="/arvosteluja">Arvosteluja</a></div>
+      </div>
+      <div>
+        <p class="eyebrow">Kuuntele</p>
+        <h2>Levyt ja videot</h2>
+        <p>Kuuntele Eilamaria Leskista <a href={site.youtubeChannel} rel="noopener" target="_blank">YouTubessa</a> ja <a href={site.spotifyAlbum} rel="noopener" target="_blank">Spotifyssa</a>.</p>
+        <p>Pohjan neiti -levyn voit tilata <a href={site.store} rel="noopener" target="_blank">verkkokaupasta</a> tai Fuga Musiikista. Muut levyt tilataan suoraan sähköpostilla <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  {next.length > 0 && (
+    <section class="section band"><div class="wrap">
+      <p class="eyebrow">Tulevat konsertit</p>
+      <h2>Seuraavaksi lavalla</h2>
+      {next.map((c) => (
+        <article class="concert"><div class="date"><time datetime={c.date}>{fmt(c.date)}</time></div>
+        <div><h3>{c.title}</h3><div class="meta">{c.venue}, {c.city}</div></div></article>
+      ))}
+      <div class="btn-row"><a class="btn" href="/konsertit">Kaikki konsertit</a></div>
+    </div></section>
+  )}
+
+  <section class="section">
+    <div class="wrap two">
+      <Image class="cover" src={cover} alt="Pohjan neiti -levyn kansi" widths={[400, 700, 1000]} sizes="(min-width: 800px) 33rem, 100vw" />
+      <div>
+        <p class="eyebrow">Levy</p>
+        <h2>Pohjan neiti</h2>
+        <p>Debyyttilevy vuodelta 2015 (Nova Records) sisältää mm. Merikannon Pohjan neiti -oopperan kohtauksia, Gounodia, Puccinia ja Mackebenin Warumin. Mukana Nova Ensemble ja baritoni Juha Kotilainen.</p>
+        <div class="btn-row"><a class="btn" href={site.store} rel="noopener" target="_blank">Tilaa verkkokaupasta</a><a class="btn" href="/kuuntele">Kaikki levyt</a></div>
+      </div>
+    </div>
+  </section>
+</Base>

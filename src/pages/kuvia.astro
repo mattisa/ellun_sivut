@@ -1,0 +1,44 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+// Kaikki kansion src/assets/gallery kuvat näytetään galleriassa nimijärjestyksessä (01.jpg, 02.jpg, ...).
+// Lisää uusia kuvia kansioon.
+const files = import.meta.glob<{ default: ImageMetadata }>('/src/assets/gallery/*.{jpg,jpeg,png}', { eager: true });
+const metas = Object.entries(files)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, m]) => m.default);
+// Lightboxissa näytetään isompi versio (max 3200 px), ei koskaan alkuperäistä suuremmaksi.
+const photos = await Promise.all(
+  metas.map(async (meta) => {
+    const big = await getImage({ src: meta, width: Math.min(meta.width, 3200), format: 'jpeg', quality: 85 });
+    return { meta, big };
+  })
+);
+---
+<Base title="Kuvia" description="Kuvia sopraano Eilamaria Leskisestä ja levyjen kansista.">
+  <div class="wrap section">
+    <p class="eyebrow">Kuvia</p>
+    <h1>Galleria</h1>
+    <div class="gallery" id="gallery" style="margin-top:2rem">
+      {photos.map(({ meta, big }, i) => (
+        <a href={big.src} data-pswp-width={big.attributes.width} data-pswp-height={big.attributes.height} aria-label={`Avaa kuva ${i + 1} suurena`}>
+          <Image src={meta} alt="Eilamaria Leskinen" widths={[400, 700, 1000]} sizes="(min-width: 70rem) 22rem, (min-width: 40rem) 33vw, 100vw" loading="lazy" />
+        </a>
+      ))}
+    </div>
+  </div>
+</Base>
+<script>
+  import PhotoSwipeLightbox from 'photoswipe/lightbox';
+  import 'photoswipe/style.css';
+  const lightbox = new PhotoSwipeLightbox({
+    gallery: '#gallery',
+    children: 'a',
+    pswpModule: () => import('photoswipe'),
+    bgOpacity: 0.95,
+    wheelToZoom: true,
+    // Suomenkieliset tekstit
+    closeTitle: 'Sulje (Esc)', zoomTitle: 'Zoomaa', arrowPrevTitle: 'Edellinen', arrowNextTitle: 'Seuraava',
+  });
+  lightbox.init();
+</script>
